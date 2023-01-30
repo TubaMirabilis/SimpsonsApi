@@ -17,9 +17,9 @@ public class CharacterQueryRepository : QueryRepository<Character>
     {
         return await Get(c => true, null, null);
     }
-    public override Character Get(Guid id)
+    public override async Task<Character> Get(Guid id)
     {
-        var c = _ctx.Characters?.FirstOrDefault(c => c.Id == id);
+        var c = await _ctx.Characters!.FirstOrDefaultAsync(c => c.Id == id);
         ArgumentNullException.ThrowIfNull(c);
         return c;
     }
