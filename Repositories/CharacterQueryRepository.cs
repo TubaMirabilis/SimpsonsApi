@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using SimpsonsApi.Data;
 using SimpsonsApi.Entities;
 using SimpsonsApi.Extensions;
@@ -12,9 +13,9 @@ public class CharacterQueryRepository : QueryRepository<Character>
     {
         _ctx = ctx;
     }
-    public override IQueryResult<Character> GetAll()
+    public override async Task<IQueryResult<Character>> GetAll()
     {
-        return Get(c => true, null, null);
+        return await Get(c => true, null, null);
     }
     public override Character Get(Guid id)
     {
@@ -22,24 +23,24 @@ public class CharacterQueryRepository : QueryRepository<Character>
         ArgumentNullException.ThrowIfNull(c);
         return c;
     }
-    public override IQueryResult<Character> Get(int pageSize, int pageIndex)
+    public override async Task<IQueryResult<Character>> Get(int pageSize, int pageIndex)
     {
-        return Get(c => true, pageSize, pageIndex);
+        return await Get(c => true, pageSize, pageIndex);
     }
-    public override IQueryResult<Character> GetByExpression(Expression<Func<Character, bool>> predicate)
+    public override async Task<IQueryResult<Character>> GetByExpression(Expression<Func<Character, bool>> predicate)
     {
-        return Get(predicate, null, null);
+        return await Get(predicate, null, null);
     }
-    public override IQueryResult<Character> GetByExpression(Expression<Func<Character, bool>> predicate, int pageSize, int pageIndex)
+    public override async Task<IQueryResult<Character>> GetByExpression(Expression<Func<Character, bool>> predicate, int pageSize, int pageIndex)
     {
-        return Get(predicate, pageSize, pageIndex);
+        return await Get(predicate, pageSize, pageIndex);
     }
-    private IQueryResult<Character> Get(Expression<Func<Character, bool>> predicate, int? pageSize, int? pageIndex)
+    private async Task<IQueryResult<Character>> Get(Expression<Func<Character, bool>> predicate, int? pageSize, int? pageIndex)
     {
         var filteredItems =
             predicate != null ?
-                _ctx.Characters?.AsQueryable().Where(predicate).ToList() :
-                _ctx.Characters?.ToList();
+                await _ctx.Characters!.AsQueryable().Where(predicate).ToListAsync() :
+                await _ctx.Characters!.ToListAsync();
         ArgumentNullException.ThrowIfNull(filteredItems);
         var finalPageSize = Math.Min(maxResultsCountPerPage, filteredItems.Count);
         var finalPageIndex = 0;
