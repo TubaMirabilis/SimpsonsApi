@@ -3,14 +3,14 @@ using SimpsonsApi.Models;
 namespace SimpsonsApi.Repositories;
 public abstract class CommandRepository<TEntity> : ICommandRepository<TEntity> where TEntity : Entity
 {
-    public abstract Task<bool> Delete(Guid id);
+    public abstract Task<bool> DeleteAsync(Guid id);
     public abstract Guid Add(TEntity entity);
     public abstract IEnumerable<Guid> Add(IEnumerable<TEntity?> entities);
-    public abstract Task Update(TEntity entity);
-    public abstract Task Update(IEnumerable<TEntity?> entities);
-    public abstract Task<IAddOrUpdateDescriptor> AddOrUpdate(TEntity entity);
+    public abstract Task UpdateAsync(TEntity entity);
+    public abstract Task UpdateAsync(IEnumerable<TEntity?> entities);
+    public abstract Task<IAddOrUpdateDescriptor> AddOrUpdateAsync(TEntity entity);
     public abstract IEnumerable<Task<IAddOrUpdateDescriptor>> AddOrUpdate(IEnumerable<TEntity?> entities);
-    public abstract Task<bool> Delete(TEntity entity);
+    public abstract Task<bool> DeleteAsync(TEntity entity);
     public abstract IDictionary<Guid, Task<bool>> Delete(IEnumerable<TEntity?> entities);
     Guid ICommandRepository.Add(Entity entity)
     {
@@ -32,13 +32,13 @@ public abstract class CommandRepository<TEntity> : ICommandRepository<TEntity> w
         throw new ArgumentException(
             $"The type \"{entities.GetType()}\" does not match the type \"{typeof(IEnumerable<TEntity>)}\"");
     }
-    async Task ICommandRepository.Update(Entity entity)
+    async Task ICommandRepository.UpdateAsync(Entity entity)
     {
         var x = entity as TEntity;
         ArgumentNullException.ThrowIfNull(x);
         if (entity.GetType() == typeof(TEntity))
         {
-            await Update(x);
+            await UpdateAsync(x);
         }
         else
         {
@@ -46,11 +46,11 @@ public abstract class CommandRepository<TEntity> : ICommandRepository<TEntity> w
                 $"The type \"{entity.GetType()}\" does not match the type \"{typeof(TEntity)}\"");
         }
     }
-    async Task ICommandRepository.Update(IEnumerable<Entity> entities)
+    async Task ICommandRepository.UpdateAsync(IEnumerable<Entity> entities)
     {
         if (entities is IEnumerable<TEntity>)
         {
-            await Update(entities.Select(e => e as TEntity));
+            await UpdateAsync(entities.Select(e => e as TEntity));
         }
         else
         {
@@ -58,13 +58,13 @@ public abstract class CommandRepository<TEntity> : ICommandRepository<TEntity> w
                 $"The type \"{entities.GetType()}\" does not match the type \"{typeof(IEnumerable<TEntity>)}\"");
         }
     }
-    async Task<IAddOrUpdateDescriptor> ICommandRepository.AddOrUpdate(Entity entity)
+    async Task<IAddOrUpdateDescriptor> ICommandRepository.AddOrUpdateAsync(Entity entity)
     {
         var x = entity as TEntity;
         ArgumentNullException.ThrowIfNull(x);
         if (entity.GetType() == typeof(TEntity))
         {
-            return await AddOrUpdate(x);
+            return await AddOrUpdateAsync(x);
         }
         throw new ArgumentException(
             $"The type \"{entity.GetType()}\" does not match the type \"{typeof(TEntity)}\"");
@@ -78,13 +78,13 @@ public abstract class CommandRepository<TEntity> : ICommandRepository<TEntity> w
         throw new ArgumentException(
             $"The type \"{entities.GetType()}\" does not match the type \"{typeof(IEnumerable<TEntity>)}\"");
     }
-    async Task<bool> ICommandRepository.Delete(Entity entity)
+    async Task<bool> ICommandRepository.DeleteAsync(Entity entity)
     {
         var x = entity as TEntity;
         ArgumentNullException.ThrowIfNull(x);
         if (entity.GetType() == typeof(TEntity))
         {
-            return await Delete(x);
+            return await DeleteAsync(x);
         }
         throw new ArgumentException(
             $"The type \"{entity.GetType()}\" does not match the type \"{typeof(TEntity)}\"");

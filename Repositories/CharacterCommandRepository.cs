@@ -22,7 +22,7 @@ public class CharacterCommandRepository : CommandRepository<Character>
     {
         return entities.Select(Add).ToList();
     }
-    public override async Task Update(Character entity)
+    public override async Task UpdateAsync(Character entity)
     {
         var foundCharacter = await _ctx.Characters!.FirstOrDefaultAsync(c => c.Id == entity.Id);
         ArgumentNullException.ThrowIfNull(foundCharacter);
@@ -33,31 +33,31 @@ public class CharacterCommandRepository : CommandRepository<Character>
         _ctx.Characters?.Remove(foundCharacter);
         _ctx.Characters?.Add(entity);
     }
-    public override async Task Update(IEnumerable<Character?> entities)
+    public override async Task UpdateAsync(IEnumerable<Character?> entities)
     {
         ArgumentNullException.ThrowIfNull(entities);
         foreach (var character in entities)
         {
             ArgumentNullException.ThrowIfNull(character);
-            await Update(character);
+            await UpdateAsync(character);
         }
     }
-    public override async Task<IAddOrUpdateDescriptor> AddOrUpdate(Character? entity)
+    public override async Task<IAddOrUpdateDescriptor> AddOrUpdateAsync(Character? entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
         var foundCharacter = await _ctx.Characters!.FirstOrDefaultAsync(c => c.Id == entity.Id);
         if (foundCharacter is not null)
         {
-            await Update(entity);
+            await UpdateAsync(entity);
             return new AddOrUpdateDescriptor(Enums.AddOrUpdate.Update, entity.Id);
         }
         return new AddOrUpdateDescriptor(Enums.AddOrUpdate.Add, Add(entity));
     }
     public override IEnumerable<Task<IAddOrUpdateDescriptor>> AddOrUpdate(IEnumerable<Character?> entities)
     {
-        return entities.Select(AddOrUpdate).ToList();
+        return entities.Select(AddOrUpdateAsync).ToList();
     }
-    public override async Task<bool> Delete(Guid id)
+    public override async Task<bool> DeleteAsync(Guid id)
     {
         var foundCharacter = await _ctx.Characters!.FirstOrDefaultAsync(c => c.Id == id);
         if (foundCharacter is null)
@@ -67,16 +67,16 @@ public class CharacterCommandRepository : CommandRepository<Character>
         _ctx.Characters?.Remove(foundCharacter);
         return true;
     }
-    public override async Task<bool> Delete(Character? entity)
+    public override async Task<bool> DeleteAsync(Character? entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
-        return await Delete(entity.Id);
+        return await DeleteAsync(entity.Id);
     }
     public override IDictionary<Guid, Task<bool>> Delete(IEnumerable<Character?> entities)
     {
         return entities
             .Where(c => c is not null)
-            .ToDictionary(c => c!.Id, Delete);
+            .ToDictionary(c => c!.Id, DeleteAsync);
     }
     public async Task<bool> SaveChangesAsync()
     {

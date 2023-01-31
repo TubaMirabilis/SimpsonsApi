@@ -13,29 +13,29 @@ public class CharacterQueryRepository : QueryRepository<Character>
     {
         _ctx = ctx;
     }
-    public override async Task<IQueryResult<Character>> GetAll()
+    public override async Task<IQueryResult<Character>> GetAllAsync()
     {
-        return await Get(c => true, null, null);
+        return await GetAsync(c => true, null, null);
     }
-    public override async Task<Character> Get(Guid id)
+    public override async Task<Character> GetAsync(Guid id)
     {
         var c = await _ctx.Characters!.FirstOrDefaultAsync(c => c.Id == id);
         ArgumentNullException.ThrowIfNull(c);
         return c;
     }
-    public override async Task<IQueryResult<Character>> Get(int pageSize, int pageIndex)
+    public override async Task<IQueryResult<Character>> GetAsync(int pageSize, int pageIndex)
     {
-        return await Get(c => true, pageSize, pageIndex);
+        return await GetAsync(c => true, pageSize, pageIndex);
     }
-    public override async Task<IQueryResult<Character>> GetByExpression(Expression<Func<Character, bool>> predicate)
+    public override async Task<IQueryResult<Character>> GetByExpressionAsync(Expression<Func<Character, bool>> predicate)
     {
-        return await Get(predicate, null, null);
+        return await GetAsync(predicate, null, null);
     }
-    public override async Task<IQueryResult<Character>> GetByExpression(Expression<Func<Character, bool>> predicate, int pageSize, int pageIndex)
+    public override async Task<IQueryResult<Character>> GetByExpressionAsync(Expression<Func<Character, bool>> predicate, int pageSize, int pageIndex)
     {
-        return await Get(predicate, pageSize, pageIndex);
+        return await GetAsync(predicate, pageSize, pageIndex);
     }
-    private async Task<IQueryResult<Character>> Get(Expression<Func<Character, bool>> predicate, int? pageSize, int? pageIndex)
+    private async Task<IQueryResult<Character>> GetAsync(Expression<Func<Character, bool>> predicate, int? pageSize, int? pageIndex)
     {
         var filteredItems =
             predicate != null ?

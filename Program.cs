@@ -13,6 +13,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddTransient<IQueryRepository, CharacterQueryRepository>();
 builder.Services.AddTransient<ICommandRepository, CharacterCommandRepository>();
 // builder.Services.AddControllers();
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("CorsPolicy", b =>
+//         b.AllowAnyOrigin()
+//          .AllowAnyMethod()
+//          .AllowAnyHeader());
+// });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
