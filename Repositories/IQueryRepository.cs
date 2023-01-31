@@ -8,8 +8,6 @@ public interface IQueryRepository
     Task<IQueryResult<Entity>> GetAll();
     Task<Entity> Get(Guid id);
     Task<IQueryResult<Entity>> Get(int pageSize, int pageIndex);
-    //IQueryResult<Entity> Get(Expression<Func<Entity, bool>> predicate);
-    //IQueryResult<Entity> Get(Expression<Func<Entity, bool>> predicate, int pageSize, int pageIndex);
 }
 public interface IQueryRepository<TEntity> : IQueryRepository where TEntity : Entity
 {

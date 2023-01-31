@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SimpsonsApi.Data;
 using SimpsonsApi.Entities;
+using SimpsonsApi.Exceptions;
 using SimpsonsApi.Models;
 namespace SimpsonsApi.Repositories;
 public class CharacterCommandRepository : CommandRepository<Character>
@@ -13,7 +14,7 @@ public class CharacterCommandRepository : CommandRepository<Character>
     public override Guid Add(Character? entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
-        // var newCharacter = new Character(entity, Guid.NewGuid());
+        entity.CreatedAt = DateTime.UtcNow;
         _ctx.Characters?.Add(entity);
         return entity.Id;
     }
@@ -25,6 +26,10 @@ public class CharacterCommandRepository : CommandRepository<Character>
     {
         var foundCharacter = await _ctx.Characters!.FirstOrDefaultAsync(c => c.Id == entity.Id);
         ArgumentNullException.ThrowIfNull(foundCharacter);
+        if (entity.CreatedAt != foundCharacter.CreatedAt)
+        {
+            throw new PropertyValueMismatchException(nameof(entity.CreatedAt));
+        }
         _ctx.Characters?.Remove(foundCharacter);
         _ctx.Characters?.Add(entity);
     }
