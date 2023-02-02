@@ -12,6 +12,7 @@ public abstract class CommandRepository<TEntity> : ICommandRepository<TEntity> w
     public abstract IEnumerable<Task<IAddOrUpdateDescriptor>> AddOrUpdate(IEnumerable<TEntity?> entities);
     public abstract Task<bool> DeleteAsync(TEntity entity);
     public abstract IDictionary<Guid, Task<bool>> Delete(IEnumerable<TEntity?> entities);
+    public abstract Task<bool> SaveChangesAsync();
     Guid ICommandRepository.Add(Entity entity)
     {
         var x = entity as TEntity;

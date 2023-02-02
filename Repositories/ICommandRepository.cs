@@ -13,6 +13,7 @@ public interface ICommandRepository
     Task<bool> DeleteAsync(Guid id);
     Task<bool> DeleteAsync(Entity entity);
     IDictionary<Guid, Task<bool>> Delete(IEnumerable<Entity> entities);
+    Task<bool> SaveChangesAsync();
 }
 public interface ICommandRepository<in TEntity> : ICommandRepository where TEntity : Entity
 {

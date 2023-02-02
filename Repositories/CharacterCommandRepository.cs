@@ -78,7 +78,7 @@ public class CharacterCommandRepository : CommandRepository<Character>
             .Where(c => c is not null)
             .ToDictionary(c => c!.Id, DeleteAsync);
     }
-    public async Task<bool> SaveChangesAsync()
+    public override async Task<bool> SaveChangesAsync()
     {
         if (await _ctx.SaveChangesAsync() > 0)
         {

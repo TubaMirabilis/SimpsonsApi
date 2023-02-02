@@ -20,6 +20,10 @@ public abstract class QueryRepository<TEntity> : IQueryRepository<TEntity> where
     }
     async Task<IQueryResult<Entity>> IQueryRepository.GetAsync(int pageSize, int pageIndex)
     {
+        if (pageSize == 0)
+        {
+            throw new IndexOutOfRangeException("Page size must be greater than zero");
+        }
         return await GetAsync(pageSize, pageIndex);
     }
 }
