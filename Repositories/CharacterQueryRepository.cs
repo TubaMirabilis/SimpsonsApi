@@ -2,12 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using SimpsonsApi.Data;
 using SimpsonsApi.Entities;
+using SimpsonsApi.Exceptions;
 using SimpsonsApi.Extensions;
 using SimpsonsApi.Models;
 namespace SimpsonsApi.Repositories;
 public class CharacterQueryRepository : QueryRepository<Character>
 {
-    private readonly int maxResultsCountPerPage = 5;
+    private readonly int maxResultsCountPerPage = 6;
     private readonly ApplicationDbContext _ctx;
     public CharacterQueryRepository(ApplicationDbContext ctx)
     {
@@ -37,6 +38,10 @@ public class CharacterQueryRepository : QueryRepository<Character>
     }
     private async Task<IQueryResult<Character>> GetAsync(Expression<Func<Character, bool>> predicate, int? pageSize, int? pageIndex)
     {
+        if (pageSize <= 0)
+        {
+            throw new IndexOutOfRangeException("Page size must be greater than zero");
+        }
         var filteredItems =
             predicate != null ?
                 await _ctx.Characters!.AsQueryable().Where(predicate).ToListAsync() :
@@ -68,7 +73,15 @@ public class CharacterQueryRepository : QueryRepository<Character>
                 }
             }
         }
+        if (filteredItems.Count == 0)
+        {
+            throw new CollectionEmptyException();
+        }
         var pagingDescriptor = filteredItems.Page(finalPageSize);
+        if (pageIndex >= pagingDescriptor.NumberOfPages)
+        {
+            throw new IndexOutOfRangeException($"Page index cannot be greater than {pagingDescriptor.NumberOfPages - 1}");
+        }
         var pageBoundries = pagingDescriptor.PagesBoundries[finalPageIndex];
         var from = pageBoundries.FirstItemZeroIndex;
         var to = pageBoundries.LastItemZeroIndex;

@@ -24,6 +24,8 @@ public class CharacterCommandRepository : CommandRepository<Character>
     }
     public override async Task UpdateAsync(Character entity)
     {
+        ArgumentException.ThrowIfNullOrEmpty(entity.Name);
+        ArgumentException.ThrowIfNullOrEmpty(entity.Occupation);
         var foundCharacter = await _ctx.Characters!.FirstOrDefaultAsync(c => c.Id == entity.Id);
         ArgumentNullException.ThrowIfNull(foundCharacter);
         if (entity.CreatedAt != foundCharacter.CreatedAt)
@@ -32,6 +34,7 @@ public class CharacterCommandRepository : CommandRepository<Character>
         }
         _ctx.Characters?.Remove(foundCharacter);
         _ctx.Characters?.Add(entity);
+        await SaveChangesAsync();
     }
     public override async Task UpdateAsync(IEnumerable<Character?> entities)
     {
@@ -65,6 +68,7 @@ public class CharacterCommandRepository : CommandRepository<Character>
             return false;
         }
         _ctx.Characters?.Remove(foundCharacter);
+        await SaveChangesAsync();
         return true;
     }
     public override async Task<bool> DeleteAsync(Character? entity)

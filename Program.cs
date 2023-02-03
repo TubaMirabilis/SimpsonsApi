@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SimpsonsApi.Data;
-using SimpsonsApi.Models;
+using SimpsonsApi.Entities;
 using SimpsonsApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +10,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 });
-builder.Services.AddTransient<IQueryRepository, CharacterQueryRepository>();
-builder.Services.AddTransient<ICommandRepository, CharacterCommandRepository>();
+builder.Services.AddTransient<IQueryRepository<Character>, CharacterQueryRepository>();
+builder.Services.AddTransient<ICommandRepository<Character>, CharacterCommandRepository>();
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
@@ -27,9 +27,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHttpsRedirection();
 }
-app.UseHsts();
-app.UseHttpsRedirection();
 // app.UseAuthorization();
 app.MapControllers();
 app.Run();
