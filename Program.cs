@@ -5,7 +5,8 @@ using SimpsonsApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables(prefix: "SIMPSONSAPI_");
-var connectionString = builder.Configuration["MariaDB:ConnectionString"];
+// var connectionString = builder.Configuration["MariaDB:ConnectionString"];
+var connectionString = "Server=localhost;Database=SimpsonsAPI;Uid=root;Pwd=iamaservantofthesecretfire;";
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
@@ -27,8 +28,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseHttpsRedirection();
 }
+app.UseHttpsRedirection();
 // app.UseAuthorization();
 app.MapControllers();
 app.Run();

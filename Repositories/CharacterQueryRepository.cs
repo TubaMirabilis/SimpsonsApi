@@ -8,7 +8,7 @@ using SimpsonsApi.Models;
 namespace SimpsonsApi.Repositories;
 public class CharacterQueryRepository : QueryRepository<Character>
 {
-    private readonly int maxResultsCountPerPage = 6;
+    private readonly int maxResultsCountPerPage = 24;
     private readonly ApplicationDbContext _ctx;
     public CharacterQueryRepository(ApplicationDbContext ctx)
     {
